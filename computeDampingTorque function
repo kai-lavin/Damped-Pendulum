@@ -1,0 +1,6 @@
+function tau_d = computeDampingTorque(angularVelocity, dampingCoefficient)
+% computeDampingTorque calculates torque from damping forces.
+% dampingCoefficient: proportionality constant for damping torque
+% tau_d = -c * angularVelocity
+tau_d = -dampingCoefficient * angularVelocity;
+end
