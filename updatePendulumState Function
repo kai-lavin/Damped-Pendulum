@@ -1,0 +1,29 @@
+function [angle_new, angularVelocity_new] = updatePendulumState(angle, angularVelocity, g, L, dampingCoefficient, dt)
+% updatePendulumState updates the pendulum state using Euler's method.
+%
+% angle: current angle (radians)
+% angularVelocity: current angular velocity (rad/s)
+% g, L, dampingCoefficient: physical parameters
+% dt: time step
+%
+% Equation of motion:
+% theta'' = (tau_net / (m*L^2))
+% With unit mass m=1, net torque tau_net = tau_g + tau_d
+% theta'' = [(-g*L*sin(theta)) + (-c*theta')] / (L^2)
+%
+% Simplify:
+% theta'' = (-g*sin(theta))/L - (c*theta')/(L^2)* If mass=1
+%
+% For simplicity, assume m=1:
+tau_g = computeGravitationalTorque(angle, g, L);
+tau_d = computeDampingTorque(angularVelocity, dampingCoefficient);
+
+% Moment of inertia for a point mass pendulum: I = m*L^2 = L^2 if m=1
+I = L^2;
+
+theta_ddot = (tau_g + tau_d) / I;
+
+% Euler integration:
+angle_new = angle + dt * angularVelocity;
+angularVelocity_new = angularVelocity + dt * theta_ddot;
+end
