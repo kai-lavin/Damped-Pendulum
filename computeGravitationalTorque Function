@@ -1,0 +1,9 @@
+function tau_g = computeGravitationalTorque(angle, g, L)
+% computeGravitationalTorque calculates the torque due to gravity.
+% angle: pendulum angle from vertical (radians)
+% g: gravitational acceleration
+% L: length of pendulum
+% tau_g = - (m*g*L*sin(angle)) if mass m=1 (unit mass assumption)
+% We assume unit mass (m=1) for simplicity, otherwise tau_g = -m*g*L*sin(angle).
+tau_g = -g * L * sin(angle); 
+end
