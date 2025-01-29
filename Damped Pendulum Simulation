@@ -1,0 +1,90 @@
+%% Damped Pendulum Simulation
+% Kai Lavin
+% Matlab Programming
+% This script simulates a damped pendulum using user-defined parameters.
+% It integrates the equations of motion over time and animates the results.
+
+clear; clc; close all;
+
+%% User Input
+disp('Enhanced Damped Pendulum Simulation');
+disp('-----------------------------------');
+g = input('Enter gravitational acceleration (m/s^2), e.g., 9.81: ');
+if isempty(g)
+    g = 9.81; % default
+end
+
+L = input('Enter pendulum length (m), e.g., 1: ');
+if isempty(L)
+    L = 1; % default
+end
+
+dampingCoefficient = input('Enter damping coefficient (e.g., 0.1): ');
+if isempty(dampingCoefficient)
+    dampingCoefficient = 0.1; % default
+end
+
+initialAngleDeg = input('Enter initial angle in degrees, e.g., 20: ');
+if isempty(initialAngleDeg)
+    initialAngleDeg = 20; % default
+end
+initialAngle = deg2rad(initialAngleDeg);
+
+initialAngularVelocity = 0; % Starting at rest
+totalTime = input('Enter total simulation time (s), e.g., 10: ');
+if isempty(totalTime)
+    totalTime = 10; % default
+end
+
+dt = input('Enter time step (s), e.g., 0.01: ');
+if isempty(dt)
+    dt = 0.01; % default
+end
+
+% Number of steps
+numSteps = round(totalTime/dt);
+
+%% Preallocate arrays
+time = linspace(0, totalTime, numSteps);
+angle = zeros(1, numSteps);
+angularVelocity = zeros(1, numSteps);
+
+% Initial Conditions
+angle(1) = initialAngle;
+angularVelocity(1) = initialAngularVelocity;
+
+%% Numerical Integration (Euler's Method)
+for i = 1:numSteps-1
+    [angle(i+1), angularVelocity(i+1)] = updatePendulumState(angle(i), ...
+        angularVelocity(i), g, L, dampingCoefficient, dt);
+end
+
+%% Visualization Setup
+% The bob position:
+% x = L*sin(angle), y = -L*cos(angle)
+x = L * sin(angle);
+y = -L * cos(angle);
+
+figure('Color','w');
+axis equal; grid on; hold on;
+title('Damped Pendulum Simulation');
+xlabel('Horizontal position (m)');
+ylabel('Vertical position (m)');
+xlim([-1.2*L 1.2*L]);
+ylim([-1.2*L 0.2*L]);
+
+% Plot pivot
+plot(0,0,'ks','MarkerSize',8,'MarkerFaceColor','k');
+
+% Draw initial pendulum line and bob
+pendulumLine = line([0 x(1)], [0 y(1)], 'Color','b','LineWidth',2);
+pendulumBob = plot(x(1), y(1), 'ro','MarkerSize',12,'MarkerFaceColor','r');
+
+%% Animation
+for i = 1:5:numSteps
+    set(pendulumLine, 'XData', [0 x(i)], 'YData', [0 y(i)]);
+    set(pendulumBob, 'XData', x(i), 'YData', y(i));
+    drawnow;
+end
+
+disp('Simulation complete.');
